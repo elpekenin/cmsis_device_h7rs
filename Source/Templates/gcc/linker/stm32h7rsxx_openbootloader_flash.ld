@@ -42,24 +42,16 @@ _Min_Heap_Size = 0x200; /* required amount of heap */
 _Min_Stack_Size = 0x400; /* required amount of stack */
 
 __FLASH_BEGIN  = 0x08000000;
-__FLASH_SIZE   = 0x00010000;
+__FLASH_SIZE   = 0xA000;
 
 
-__RAM_BEGIN    = 0x24000000;
-__RAM_SIZE     = 0x4FC00;
-__RAM_NONCACHEABLEBUFFER_SIZE = 0x400;
+__RAM_BEGIN    = 0x24028000;
+__RAM_SIZE     = 0x4000;
 
 /* Memories definition */
 MEMORY
 {
   RAM       (xrw) : ORIGIN = __RAM_BEGIN,    LENGTH = __RAM_SIZE
-  RAM_NONCACHEABLEBUFFER (xrw) : ORIGIN = __RAM_BEGIN + __RAM_SIZE,  LENGTH = __RAM_NONCACHEABLEBUFFER_SIZE
-
-  ITCM      (xrw) : ORIGIN = 0x00000000,    LENGTH = 0x00010000
-  DTCM       (rw) : ORIGIN = 0x20000000,    LENGTH = 0x00010000
-  SRAMAHB   (rw)  : ORIGIN = 0x30000000,  LENGTH = 0x00008000
-  BKPSRAM   (rw)  : ORIGIN = 0x38800000,  LENGTH = 0x00001000
-
   FLASH     (xrw) : ORIGIN = __FLASH_BEGIN, LENGTH = __FLASH_SIZE
 }
 
@@ -179,14 +171,8 @@ SECTIONS
     __bss_end__ = _ebss;
   } >RAM
 
-  RW_NONCACHEABLE :
-  {
-    __NONCACHEABLEBUFFER_BEGIN = .;/* create symbol for start of section */
-    KEEP(*(noncacheable_buffer))
-    __NONCACHEABLEBUFFER_END = .;  /* create symbol for start of section */
-  } > RAM_NONCACHEABLEBUFFER
 
-  /* User_heap_stack section, used to check that there is enough "DTCM" Ram  type memory left */
+  /* User_heap_stack section*/
   ._user_heap_stack :
   {
     . = ALIGN(8);
@@ -195,7 +181,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >DTCM
+  } >RAM
 
   /* Remove information from the compiler libraries */
   /DISCARD/ :
